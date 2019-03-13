@@ -1,0 +1,112 @@
+<html>
+<body>
+<script type="text/javascript">
+// From here: https://gist.github.com/munificent/b1bcd969063da3e6c298be070a22b604#gistcomment-2854606
+// Added the parsing of the querystring to make it easy to play around with some numbers.
+
+const urlParams = new URLSearchParams(window.location.search);
+const myParam = urlParams.get('HEIGHT');
+
+const HEIGHT = parseInt(urlParams.get('HEIGHT') || 40);
+const WIDTH  = parseInt(urlParams.get('WIDTH') || 80);
+const [MIN_ROOM_HEIGHT, MIN_ROOM_WIDTH] = (urlParams.get('ROOM_MIN') || "3x5").split("x").map( function(i){return parseInt(i)}) 
+const [VARIABLE_ROOM_HEIGHT, VARIABLE_ROOM_WIDTH] = (urlParams.get('ROOM_VARIANCE') || "6x10").split("x").map( function(i){return parseInt(i)}) 
+const ITERATIONS = parseInt(urlParams.get('ITERATIONS') || 1000);
+const map = [];
+
+console.log("--Configuration--");
+console.log("Height: " + HEIGHT);
+console.log("Width: " + WIDTH);
+console.log("Min room height: " + MIN_ROOM_HEIGHT);
+console.log("Min room width: " + MIN_ROOM_WIDTH);
+console.log("Variable room height: " + VARIABLE_ROOM_HEIGHT);
+console.log("Variable room width: " + VARIABLE_ROOM_WIDTH);
+
+const PLAYER = '@';
+const TREASURE = '$';
+const ROCK = ' ';
+const CORNER = '!';
+const WALL = '#';
+const FLOOR = '.';
+const DOOR1 = '+';
+const DOOR2 = '\'';
+
+function rand (val) {
+  return Math.floor(Math.random() * val);
+}
+
+function cave (start) {
+  const width = rand(VARIABLE_ROOM_WIDTH) + MIN_ROOM_WIDTH;
+  const height = rand(VARIABLE_ROOM_HEIGHT) + MIN_ROOM_HEIGHT;
+  const left = rand(WIDTH - width - 2) + 1;
+  const top = rand(HEIGHT - height - 2) + 1;
+
+  for (let y = top - 1; y < top + height + 2; y++) {
+    for (let x = left - 1; x < left + width + 2; x++) {
+      if (map[y][x] === FLOOR)
+        return;
+    }
+  }
+
+  let doors = 0;
+  let door_x;
+  let door_y;
+
+  if (!start) {
+    for (let y = top - 1; y < top + height + 2; y++) {
+      for (let x = left - 1; x < left + width + 2; x++) {
+        let s = x < left || x > left + width;
+        let t = y < top || y > top + height;
+        if (s ^ t && map[y][x] === WALL) {
+          doors++;
+          if (rand(doors) === 0) {
+            door_x = x;
+            door_y = y;
+          }
+        }
+      }
+    }
+
+    if (doors === 0) {
+      return;
+    }
+  }
+
+  for (let y = top - 1; y < top + height + 2; y++) {
+    for (let x = left - 1; x < left + width + 2; x++) {
+      let s = x < left || x > left + width;
+      let t = y < top || y > top + height;
+      map[y][x] = s && t ? CORNER : (s ^ t ? WALL : FLOOR);
+    }
+  }
+
+  if (doors > 0) {
+    map[door_y][door_x] = rand(2) ? DOOR2 : DOOR1;
+  }
+
+  for (let j = 0; j < (start ? 1 : rand(6) + 1); j++) {
+    map[rand(height) + top][rand(width) + left] =
+      start ? PLAYER :
+      (rand(4) === 0 ? TREASURE : String.fromCharCode(rand(62) + 65));
+  }
+}
+
+function generate () {
+  for (let y = 0; y < HEIGHT; y++) {
+    map[y] = [];
+    for (let x = 0; x < WIDTH; x++) {
+      map[y][x] = ROCK;
+    }
+  }
+
+  for (let j = 0; j < ITERATIONS; j++) {
+    cave(j === 0);
+  }
+}
+
+generate();
+document.write("<pre>" + map.map(r => r.map(c => c === CORNER ? WALL : c).join('')).join('\n') + "</pre>");
+</script>
+
+</body>
+</html>
