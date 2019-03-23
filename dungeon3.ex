@@ -119,28 +119,15 @@ defmodule Dungeon3 do
     end
   end
 
-  defp _corners_and_walls(map, coords = %{top_left_col: tlc, top_left_row: tlr, bottom_right_col: brc, bottom_right_row: brr}) do
-    Enum.to_list(tlc..brc)
-    |> Enum.reduce(map, fn(col, map) -> 
-      Enum.to_list(tlr..brr)
-      |> Enum.reduce(map, fn(row, map) ->
-        vertical_wall   = (col == tlc || col == brc)
-        horizontal_wall = (row == tlr || row == brr)
-        new_tile = cond do
-                     vertical_wall && horizontal_wall ->  0
-                     vertical_wall || horizontal_wall -> ?#
-                     true -> ?.
-                   end 
-        _replace_tile_at(map, col, row, new_tile)
-      end)
-    end)
-  end
-
   defp _corners_walls_floors(map, coords = %{top_left_col: tlc, top_left_row: tlr, bottom_right_col: brc, bottom_right_row: brr}) do
+    inner_tlr = tlr + 1
+    inner_brr = brr - 1
+    inner_tlc = tlc + 1
+    inner_brc = brc - 1
     _corners(map, [{tlc,tlr}, {tlc, brr}, {brc, tlr}, {brc, brr}])
-    |> _walls({tlc, brc}, Enum.to_list(tlr..brr))
-    |> _walls(Enum.to_list(tlc..brc), {tlr, brr})
-    |> _floors(Enum.to_list((tlc+1)..(brc-1)), Enum.to_list((tlr+1)..(brr-1)))
+    |> _walls({tlc, brc}, Enum.to_list(inner_tlr..inner_brr))
+    |> _walls(Enum.to_list(inner_tlc..inner_brc), {tlr, brr})
+    |> _floors(Enum.to_list(inner_tlc..inner_brc), Enum.to_list(inner_tlr..inner_brr))
   end
 
   defp _corners(map, []), do: map

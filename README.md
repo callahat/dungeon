@@ -18,4 +18,6 @@ Implementation of the generator using a `List` as the structure that holds the d
 
 Similar, but instead of a `List` a `Map` is used. Much faster than the List version as only certain specific elements need checked/changed (ie, much faster with the random access)
 
+**dungeon3.ex**
 
+Using more recursive methods and less `for` statements. Also modified some of the logic around generating a room and not checking based on the coordinate what a particular tile should be (since the rooms are rectangular this information is easily calculated).
