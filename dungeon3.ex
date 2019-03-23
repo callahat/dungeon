@@ -1,6 +1,7 @@
 # port of this to Elixir: https://gist.github.com/ctsrc/fef3006e1d728bb7271cff0656eb0280#file-dungeon-c
 # Implement with a map instead of list
-defmodule Dungeon2 do
+# More methods instead of iterating
+defmodule Dungeon3 do
   @room_min_height  3
   @room_max_height  9
   @room_min_width   5
@@ -103,16 +104,16 @@ defmodule Dungeon2 do
   end
 
   defp _plop_room(map, coords = %{top_left_col: tlc, top_left_row: tlr, bottom_right_col: brc, bottom_right_row: brr}, ?@) do
-    _corners_and_walls(map, coords)
+    _corners_walls_floors(map, coords)
     |> _replace_tile_at(_rand_range(tlc + 1, brc - 1), _rand_range(tlr + 1, brr - 1), ?@)
   end
 
   defp _plop_room(map, coords = %{top_left_col: tlc, top_left_row: tlr, bottom_right_col: brc, bottom_right_row: brr}, entities) do
     case _door_candidates(map, coords) do
-      [] ->
+      [] -> 
         map
       door_coords ->
-        _corners_and_walls(map, coords)
+        _corners_walls_floors(map, coords)
         |> _add_door(Enum.random(door_coords))
         |> _add_entities(entities, coords)
     end
@@ -120,7 +121,7 @@ defmodule Dungeon2 do
 
   defp _corners_and_walls(map, coords = %{top_left_col: tlc, top_left_row: tlr, bottom_right_col: brc, bottom_right_row: brr}) do
     Enum.to_list(tlc..brc)
-    |> Enum.reduce(map, fn(col, map) ->
+    |> Enum.reduce(map, fn(col, map) -> 
       Enum.to_list(tlr..brr)
       |> Enum.reduce(map, fn(row, map) ->
         vertical_wall   = (col == tlc || col == brc)
@@ -129,10 +130,54 @@ defmodule Dungeon2 do
                      vertical_wall && horizontal_wall ->  0
                      vertical_wall || horizontal_wall -> ?#
                      true -> ?.
-                   end
+                   end 
         _replace_tile_at(map, col, row, new_tile)
       end)
     end)
+  end
+
+  defp _corners_walls_floors(map, coords = %{top_left_col: tlc, top_left_row: tlr, bottom_right_col: brc, bottom_right_row: brr}) do
+    _corners(map, [{tlc,tlr}, {tlc, brr}, {brc, tlr}, {brc, brr}])
+    |> _walls({tlc, brc}, Enum.to_list(tlr..brr))
+    |> _walls(Enum.to_list(tlc..brc), {tlr, brr})
+    |> _floors(Enum.to_list((tlc+1)..(brc-1)), Enum.to_list((tlr+1)..(brr-1)))
+  end
+
+  defp _corners(map, []), do: map
+  defp _corners(map, [{col, row} | corner_coords]) do
+    _replace_tile_at(map, col, row, 0)
+    |> _corners(corner_coords)
+  end
+
+  defp _walls(map, cols, {trow, brow}) when is_list(cols) do
+    _walls(map, cols, trow)
+    |> _walls(cols, brow)
+  end
+  defp _walls(map, {lcol, rcol}, rows) when is_list(rows) do
+    _walls(map, lcol, rows)
+    |> _walls(rcol, rows)
+  end
+  defp _walls(map, _col, []), do: map
+  defp _walls(map, [], _row), do: map
+  defp _walls(map, col, [row | rows]) do
+    _replace_tile_at(map, col, row, ?#)
+    |> _walls(col, rows)
+  end
+  defp _walls(map, [col | cols], row) do
+    _replace_tile_at(map, col, row, ?#)
+    |> _walls(cols, row)
+  end
+  
+  defp _floors(map, [], []), do: map
+  defp _floors(map, _c, []), do: map
+  defp _floors(map, [], _r), do: map
+  defp _floors(map, [col | cols], rows) do
+    _floors(map, col, rows)
+    |> _floors(cols, rows)
+  end
+  defp _floors(map, col, [row | rows]) do
+    _replace_tile_at(map, col, row, ?.)
+    |> _floors(col, rows)
   end
 
   defp _door_candidates(map, coords = %{top_left_col: tlc, top_left_row: tlr, bottom_right_col: brc, bottom_right_row: brr}) do
