@@ -25,3 +25,5 @@ Dungeon2.generate
 See the various generator readmes for more information on the different algorithms
 
 [Connected Rooms](./generators/lib/connected_rooms/README.md)
+
+[Drunkard's Walk](./generators/lib/drunkards_walk/README.md)
