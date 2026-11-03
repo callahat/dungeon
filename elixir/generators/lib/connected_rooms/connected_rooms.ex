@@ -30,11 +30,13 @@ defmodule ConnectedRooms do
   @doc """
   Generates a level using the box method.
 
-  Returns a Map containing a {row, col} tuple and a value. The value will be one of several
-  single character codes indicating what is at that coordinate.
-
   Iterates a constant number of times given map width/height attempting to place
   valid rooms.
+
+  May pass a map of overrides.
+  debug: true will print out the map as it goes pausing
+    shortly to report on progress as it attempts to place connecting rooms.
+  solo_level: a positive number will add entities to rooms.
 
   ?\s - Rock
   ?.  - Floor

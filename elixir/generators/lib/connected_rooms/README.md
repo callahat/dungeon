@@ -20,3 +20,12 @@ Using more recursive methods and less `for` statements. Also modified some of th
 
 Uses a map, and pulled from https://github.com/callahat/dungeon_crawl/blob/master/lib/dungeon_crawl/dungeon_generation/map_generators/connected_rooms.ex
 Can take additional optional parameters to the `generate` function.
+
+## Usage
+
+```elixir
+Dungeon.generate()
+Dungeon2.generate()
+Dungeon3.generate()
+ConnectedRooms.generate(%{debug: true, solo_level: 1})
+```
