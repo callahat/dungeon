@@ -1,4 +1,4 @@
-# dungeon
+# Javascript Dungeon Algorithms
 
 Ports of this dungeon generator: https://gist.github.com/ctsrc/fef3006e1d728bb7271cff0656eb0280#file-dungeon-c
 

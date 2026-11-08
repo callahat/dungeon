@@ -1,4 +1,4 @@
-# dungeon
+# Elixir Dungeon Algorithms
 
 Various dungeon generation algorithms.
 
