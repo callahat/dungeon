@@ -27,3 +27,9 @@ See the various generator readmes for more information on the different algorith
 [Connected Rooms](./generators/lib/connected_rooms/README.md)
 
 [Drunkard's Walk](./generators/lib/drunkards_walk/README.md)
+
+[Labyrynth](./generators/lib/labrynth/README.md)
+
+[Nethack Style](./generators/lib/nethack_style/README.md)
+
+[Rooms and Tunnels Binary Space Partition](./generators/lib/rooms_and_tunnels_bsp/README.md)
