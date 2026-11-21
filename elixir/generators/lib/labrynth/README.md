@@ -8,7 +8,7 @@ until there are no more frontier squares.
 
 ## Elixir Versions
 
-**drunkards_walk.ex**
+**labrynth.ex**
 
 Pulled from https://github.com/callahat/dungeon_crawl/blob/master/lib/dungeon_crawl/dungeon_generation/map_generators/labrynth.ex
 Can take additional optional parameters to the `generate` function.

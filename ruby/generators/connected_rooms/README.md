@@ -10,7 +10,7 @@ Can take additional optional parameters to `new`.
 
 ## Usage
 
-```ruby
+```bash
 require './connected_rooms/connected_rooms'
 cr = ConnectedRooms.new debug: nil, cave_width: 20, cave_height: 15, solo_level: 10
 cr.generate
